@@ -1,0 +1,39 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "KinematicBody2D",
+"class": "Box",
+"language": "GDScript",
+"path": "res://Scripts/Objects/Box.gd"
+} ]
+_global_script_class_icons={
+"Box": ""
+}
+
+[application]
+
+config/name="AdventurePuzzle"
+run/main_scene="res://Scenes/Levels/Mundo1.tscn"
+config/icon="res://icon.png"
+
+[layer_names]
+
+2d_physics/layer_1="Medio"
+2d_physics/layer_2="Player"
+2d_physics/layer_3="Objetos"
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+environment/default_environment="res://default_env.tres"
