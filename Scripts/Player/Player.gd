@@ -1,48 +1,61 @@
 extends KinematicBody2D
 
-const moveSpeed=25;
-const maxSpeed=55;
-const jumpHeigth=-300;
+#Constantes de la fisica del jugador
+const moveSpeed=80;
+export var acceleration=400
+const maxSpeed=100;
+export var friction=400
+const jumpHeigth=-310;
 const up=Vector2(0,-1);
-const gravity=15
+const gravity=16
 var motion=Vector2()
-onready var sprite=$AnimatedSprite
+onready var animationTree=$AnimationTree
+onready var animationState=animationTree.get("parameters/playback")
 var saltoDoble=false
 var agua=false
-
+#Funcion que controla las fisicas del jugador
 func _physics_process(delta):
-	motion.y+=gravity	
-	GetInput()
+	motion.y+=gravity
+	Move_state(delta)
 	MoveBox()
-	motion=move_and_slide(motion,up)
+	move()
 
-func GetInput():
-	var friction=false
-	if Input.is_action_pressed("ui_right"):
-		sprite.play("Walk")
-		sprite.flip_h=false
-		motion.x=min(motion.x+moveSpeed,maxSpeed)
-	elif Input.is_action_pressed("ui_left"):
-		sprite.play("Walk")
-		sprite.flip_h=true
-		motion.x=max(motion.x-moveSpeed,-maxSpeed)
-	else:
-		sprite.play("Idle")
-		friction=true
-	if is_on_floor():
+#Funcion para el movimiento y animacion del jugador
+func Move_state(delta):
+	var input_vector=Vector2.ZERO
+	input_vector.x=Input.get_action_raw_strength("ui_right")-Input.get_action_strength("ui_left")
+	#input_vector.y=Input.get_action_strength("ui_down")-Input.get_action_strength("ui_up")
+	input_vector=input_vector.normalized()#Nos moveremos en la misma velocidad en cualquier direccion
+	if input_vector!=Vector2.ZERO:
+		animationTree.set("parameters/Idle/blend_position",input_vector)
+		animationTree.set("parameters/Run/blend_position",input_vector)
+		animationTree.set("parameters/Jum/blend_position",input_vector)
+		animationTree.set("parameters/Jum2/blend_position",input_vector)
+		animationTree.set("parameters/Ducking/blend_position",input_vector)
+		#animationTree.set("parameters/Looking/blend_position",input_vector)
+		if is_on_floor():
+			animationState.travel("Run")
+		motion=motion.move_toward(input_vector*maxSpeed,acceleration*delta)
+	elif is_on_floor():
+		animationState.travel("Idle")
+		motion=motion.move_toward(Vector2.ZERO,friction*delta)
+		if Input.is_action_pressed("ui_down"):
+			animationState.travel("Ducking")
+	if is_on_floor():#SI el jugador se encuentra en el piso
 		saltoDoble=true
 		if Input.is_action_just_pressed("ui_up"):
+			animationState.travel("Jum")
 			motion.y=jumpHeigth
-		if friction==true:
-			motion.x=lerp(motion.x,0,0.5)
+			#motion=motion.move_toward(input_vector*maxSpeed,acceleration*delta)		
 	else:
-		sprite.play("Jump")
 		if (Input.is_action_just_pressed("ui_up") && saltoDoble==true) || (Input.is_action_just_pressed("ui_up") && agua==true):
-			sprite.play("JumpDouble")
+			animationState.travel("Jum2")
 			saltoDoble=false
 			motion.y=jumpHeigth+80
-		if friction==true:
-			motion.x=lerp(motion.x,0,0.01)
+		#move()
+
+func move():
+	motion=move_and_slide(motion,up)
 
 func MoveBox():
 	for i in get_slide_count():
@@ -52,3 +65,6 @@ func MoveBox():
 
 func InWater(varInWater):
 	agua=varInWater
+
+func Looking():
+	animationState.travel("Looking")

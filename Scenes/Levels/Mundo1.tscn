@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Sprints/Seasonal Tilesets/TileMap1/Mundo1.tres" type="TileSet" id=1]
 [ext_resource path="res://Sprints/Seasonal Tilesets/1 - Grassland/Background parts/4 - Cloud_cover_2.png" type="Texture" id=2]
@@ -10,14 +10,10 @@
 [ext_resource path="res://Scenes/Entities/Oso.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Scenes/Player/Player.tscn" type="PackedScene" id=9]
 [ext_resource path="res://Scenes/Objects/Box.tscn" type="PackedScene" id=10]
-[ext_resource path="res://Sprints/Seasonal Tilesets/1 - Grassland/water/1.png" type="Texture" id=11]
-[ext_resource path="res://Scripts/Levels/Mundo1.gd" type="Script" id=12]
-
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 46.7692, 16.3441 )
+[ext_resource path="res://Scenes/Objects/water.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Scenes/Objects/Dialogo.tscn" type="PackedScene" id=12]
 
 [node name="Mundo1" type="Node2D"]
-script = ExtResource( 12 )
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = ExtResource( 1 )
@@ -85,20 +81,7 @@ texture = ExtResource( 5 )
 centered = false
 offset = Vector2( 200, 53 )
 
-[node name="water" type="Area2D" parent="Background"]
-position = Vector2( 568, 433 )
-scale = Vector2( 1.21875, 2.90625 )
-collision_layer = 2
-collision_mask = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Background/water"]
-position = Vector2( 0.410278, 0.688141 )
-shape = SubResource( 1 )
-
-[node name="Sprite" type="Sprite" parent="Background/water"]
-position = Vector2( -1.23382e-05, 0.688161 )
-scale = Vector2( 0.965812, 1.0215 )
-texture = ExtResource( 11 )
+[node name="water" parent="Background" instance=ExtResource( 11 )]
 
 [node name="Camera2D2" type="Camera2D" parent="."]
 position = Vector2( 340, 221 )
@@ -138,10 +121,10 @@ position = Vector2( 311, 196 )
 [node name="Objects" type="Node2D" parent="."]
 
 [node name="Button" parent="Objects" instance=ExtResource( 6 )]
-position = Vector2( 378, 375 )
+position = Vector2( 378, 376 )
 
 [node name="Box" parent="Objects" instance=ExtResource( 10 )]
 position = Vector2( 442, 147 )
 
-[connection signal="body_entered" from="Background/water" to="." method="_on_water_body_entered"]
-[connection signal="body_exited" from="Background/water" to="." method="_on_water_body_exited"]
+[node name="Dialogo" parent="." instance=ExtResource( 12 )]
+position = Vector2( 279, 329 )
