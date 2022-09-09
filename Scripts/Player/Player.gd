@@ -2,17 +2,21 @@ extends KinematicBody2D
 
 #Constantes de la fisica del jugador
 const moveSpeed=80;
-export var acceleration=400
 const maxSpeed=100;
-export var friction=400
 const jumpHeigth=-310;
 const up=Vector2(0,-1);
 const gravity=16
+
+export var friction=400
+export var acceleration=400
+
 var motion=Vector2()
-onready var animationTree=$AnimationTree
-onready var animationState=animationTree.get("parameters/playback")
 var saltoDoble=false
 var agua=false
+
+onready var animationTree=$AnimationTree
+onready var animationState=animationTree.get("parameters/playback")
+
 #Funcion que controla las fisicas del jugador
 func _physics_process(delta):
 	motion.y+=gravity
@@ -52,7 +56,6 @@ func Move_state(delta):
 			animationState.travel("Jum2")
 			saltoDoble=false
 			motion.y=jumpHeigth+80
-		#move()
 
 func move():
 	motion=move_and_slide(motion,up)
